@@ -2,4 +2,4 @@
 
 require 'string_awesome/awesome_methods'
 
-String.send :include, StringAwesome::AwesomeMethods::PublicInstanceMethods
+String.send :include, StringAwesome::AwesomeMethods
