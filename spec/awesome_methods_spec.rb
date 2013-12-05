@@ -45,7 +45,18 @@ end
 # String#slug
 # 
 describe 'String#slug' do
-  it 'should parse the text to a proper format for URL\'s' do
+  it "should parse the text to a valid format for URL's (downcase)" do
   	'Lorem IPSUM Dolor?'.slug.should eq 'lorem-ipsum-dolor'
+  end
+
+  pending 'not downcase'
+end
+
+# 
+# String#ellipsis
+# 
+describe 'String#ellipsis' do
+  it "should append ellipsis to the text's half length" do
+  	'lorem ipsum'.slug.should eq 'lorem'
   end
 end

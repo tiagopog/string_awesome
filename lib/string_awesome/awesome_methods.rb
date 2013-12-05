@@ -21,8 +21,8 @@ module StringAwesome
 	  # letters in the middle of the word from being uppercase.
 		# 
 		# Example:
-		#   >> "loREm IPsuM DOLOR" 
-		#   => "Lorem Ipsum Dolor"
+		#   >> 'loREm IPsuM DOLOR'.to_title
+		#   => 'Lorem Ipsum Dolor'
 	
 		def to_title
 			self.downcase.titleize
@@ -31,12 +31,12 @@ module StringAwesome
 		# Removes HTML tags from text.
 		# 
 		# Example:
-		#   >> "<h1><a href="http://somecoolurl.com">Aloha!</a></h1>" 
-		#   => "Aloha!"
+		#   >> '<h1><a href="http://somecoolurl.com">Aloha!</a></h1>'.strip_tags 
+		#   => 'Aloha!'
 		#
 		# Arguments:
 		#  allow_whitespace: (Boolean)
-		#    - Let it returns the replaced block HTML tags as whitespaces
+		#    - Let it returns the replaced block HTML tags as whitespaces.
     
     def strip_tags(allow_whitespace = false)
     	str = Sanitize.clean self
@@ -45,14 +45,33 @@ module StringAwesome
 
     # Parses text to a valid format for URL's.
     # 
+		# Example:
+		#   >> 'Lórem IPSUM Dolor?'.slug
+		#   => 'lorem-ipsum-dolor'
+		#
+		# Arguments:
+		#   downcase: (Boolean)
+		#    - If true, it will force the String to be in downcase.
+		
+		def slug(downcase = true)
+			str = self.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/n,'').gsub(/\W|_/, '-').gsub(/[-]{2,}/, '-').gsub(/^-|-$/, '').to_s
+			downcase ? str.downcase : str
+	  end
+
+	  # Append ellipsis to the end of a text. By default, it will be
+	  # applied to the text's half length.
     # 
 		# Example:
-		#   >> "Lórem IPSUM Dolor?" 
-		#   => "lorem-ipsum-dolor"
+		#   >> "It's a very loooooong text!".ellipsis 11
+		#   => "It's a very..."
+		#
+		# Arguments:
+		#   downcase: (Boolean)
+		#    - If true, it will force the String to be in downcase.
 		
-		def slug(allow_downcase = true)
-			str = self.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/n,'').gsub(/\W|_/, '-').gsub(/[-]{2,}/, '-').gsub(/^-|-$/, '').to_s
-			allow_downcase ? str.downcase : str
+		def ellipsis(max_length = nil, html_encoded = false)
+			max_length = (self.length / 2) - 1 if max_length.blank?
+			# TODO: to be continued...
 	  end
   end	
 end
