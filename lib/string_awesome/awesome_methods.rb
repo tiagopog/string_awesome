@@ -1,6 +1,7 @@
 # coding: utf-8
 
 require 'active_support/inflector'
+require 'sanitize'
 
 module StringAwesome
   # These methods are all included into the String class.
@@ -34,8 +35,7 @@ module StringAwesome
 		#   #=> "Aloha!"
     
     def strip_tags
-    	require 'sanitize'
-      Sanitize.clean self
+    	Sanitize.clean self
     end
   end	
 end
