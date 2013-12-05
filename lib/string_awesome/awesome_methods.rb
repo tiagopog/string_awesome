@@ -51,7 +51,7 @@ module StringAwesome
 		#   => "lorem-ipsum-dolor"
 		
 		def slug(allow_downcase = true)
-			str = self.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/n,'').gsub(/\W|_/, '-').gsub(/[-]{2,}/, '-').gsub(/^-|-$/, '')
+			str = self.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/n,'').gsub(/\W|_/, '-').gsub(/[-]{2,}/, '-').gsub(/^-|-$/, '').to_s
 			allow_downcase ? str.downcase : str
 	  end
   end	

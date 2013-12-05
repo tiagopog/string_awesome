@@ -46,12 +46,6 @@ end
 # 
 describe 'String#slug' do
   it 'should parse the text to a proper format for URL\'s' do
-  	# EscapeUtils.escape_url avoids the "...warning: regexp match /.../n against to UTF-8 string" message
-  	str = EscapeUtils.escape_url('Lórem IPSUM Dolor?')
-  	str.slug.should eq 'lorem-ipsum-dolor'
-  end
-
-  it 'should return an empty string when it has only non (word|number)s charaters' do
-  	'!@#$%ˆ&*(){}[]|\\:;"<>?,./`-=+_'.slug.should eq ''
+  	'Lorem IPSUM Dolor?'.slug.should eq 'lorem-ipsum-dolor'
   end
 end
