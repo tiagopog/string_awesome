@@ -33,9 +33,14 @@ module StringAwesome
 		# Example:
 		#   >> "<h1><a href="http://somecoolurl.com">Aloha!</a></h1>" 
 		#   #=> "Aloha!"
+		#
+		# Arguments:
+		#  allow_whitespace: (Boolean)
+		#    - Let it returns the replaced block HTML tags as whitespaces
     
-    def strip_tags
-    	Sanitize.clean self
+    def strip_tags(allow_whitespace = false)
+    	str = Sanitize.clean self
+    	allow_whitespace ? str : str.strip
     end
   end	
 end
