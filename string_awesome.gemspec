@@ -21,6 +21,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'activesupport', ['>= 3.0', '< 5.0']
   spec.add_runtime_dependency 'sanitize', '~> 2.0'
 
+  spec.add_development_dependency 'escape_utils', '~> 1.0'
   spec.add_development_dependency 'rspec'
   spec.add_development_dependency 'bundler', '~> 1.3'
   spec.add_development_dependency 'rake'

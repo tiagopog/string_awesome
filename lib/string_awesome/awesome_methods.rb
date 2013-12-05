@@ -11,7 +11,7 @@ module StringAwesome
   	# Example:
   	#   >> "Hello 
   	#          world!".nl2br 
-  	#   #=> "Hello <br/ > world!"
+  	#   => "Hello <br/ > world!"
 
 	  def nl2br
 	  	self.gsub /\n/, '<br />'
@@ -22,7 +22,7 @@ module StringAwesome
 		# 
 		# Example:
 		#   >> "loREm IPsuM DOLOR" 
-		#   #=> "Lorem Ipsum Dolor"
+		#   => "Lorem Ipsum Dolor"
 	
 		def to_title
 			self.downcase.titleize
@@ -32,7 +32,7 @@ module StringAwesome
 		# 
 		# Example:
 		#   >> "<h1><a href="http://somecoolurl.com">Aloha!</a></h1>" 
-		#   #=> "Aloha!"
+		#   => "Aloha!"
 		#
 		# Arguments:
 		#  allow_whitespace: (Boolean)
@@ -42,5 +42,17 @@ module StringAwesome
     	str = Sanitize.clean self
     	allow_whitespace ? str : str.strip
     end
+
+    # Parses text to a valid format for URL's.
+    # 
+    # 
+		# Example:
+		#   >> "Lórem IPSUM Dolor?" 
+		#   => "lorem-ipsum-dolor"
+		
+		def slug(allow_downcase = true)
+			str = self.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/n,'').gsub(/\W|_/, '-').gsub(/[-]{2,}/, '-').gsub(/^-|-$/, '')
+			allow_downcase ? str.downcase : str
+	  end
   end	
 end
