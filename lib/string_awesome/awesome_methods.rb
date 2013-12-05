@@ -26,5 +26,15 @@ module StringAwesome
 		def to_title
 			self.downcase.titleize
 		end
+
+		# Removes HTML tags from text.
+		# 
+		# Example:
+		#   >> "<h1><a href="http://somecoolurl.com">Aloha!</a></h1>" 
+		#   #=> "Aloha!"
+    
+    def strip_tags
+      Sanitize.clean self
+    end
   end	
 end

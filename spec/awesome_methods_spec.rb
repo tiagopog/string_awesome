@@ -15,3 +15,9 @@ describe 'String#to_title' do
   	"here's aN AWEsome TiTle!".to_title.should eq "Here's An Awesome Title!"
   end
 end
+
+describe 'String#strip_tags' do
+  it 'removes any HTML tag from a given text' do
+  	'<h1><a href="http://somecoolurl.com">Aloha!</a></h1>'.should eq 'Aloha!'
+  end
+end
