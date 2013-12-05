@@ -1,6 +1,7 @@
 # coding: utf-8
 
 require 'active_support/inflector'
+require 'sanitize'
 
 module StringAwesome
   # These methods are all included into the String class.
