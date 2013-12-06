@@ -58,24 +58,46 @@ module StringAwesome
 			downcase ? str.downcase : str
 	  end
 
-	  # Append ellipsis to the end of a text. By default, it will be
-	  # applied to the text's half length.
+	  # Append ellipsis to the text.
     # 
 		# Example:
 		#   >> "It's a very loooooong text!".ellipsis 11
 		#   => "It's a very..."
 		#
 		# Arguments:
-		#   downcase: (Boolean)
-		#    - If true, it will force the String to be in downcase.
+		#   max_length: (Integer)
+		#    - Indicates the max length expected, before ellipsis, for the result.
+		#   options: (Hash
+		#    - Other options such as 
+		#      - :html_encoded - If true, the ellipsis will be displayed in HTML encoded format: &hellip;.
+		#      - :after_word   - If true, the ellipsis will be displayed necessarily after a word.
 		
-		def ellipsis(max_length = nil, after_a_word = true, html_encoded = false)
-			if self.length > 1
-				max_length = (self.length / 2).round - 1 if max_length.blank?
-				# html: &hellip;
-				# todo: remove whitespaces "foobar ..."
-				# todo: enable to append it only after words
-				(self[0..max_length] + '...').gsub /\s+/, ''
+		def ellipsis(max_length = 0, options = {})
+			length = self.length
+			
+			if length > 1 and max_length <= length
+				# Adjusts the max_length
+				max_length  = (length / 2).round if max_length == 0
+				max_length -= 1
+				
+				# Truncates the text according to the max_length
+				str = self[0..max_length]
+
+				# Defines how the ellipsis will be displayed
+				ellip = options[:html_encoded] == true ? '&hellip;' : '...'
+
+				# If ellipsis has to be applied after a word
+				if options[:after_word] == true
+					words = str.split ' ' 
+					words = words[0..words.length - 2] if words.length > 1
+					str   = words.join(' ')
+				else
+					str = str.gsub(/\s+$/, '')
+				end
+				 
+				str + ellip
+			else
+				self
 			end
 	  end
   end	
