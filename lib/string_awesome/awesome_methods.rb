@@ -69,9 +69,14 @@ module StringAwesome
 		#   downcase: (Boolean)
 		#    - If true, it will force the String to be in downcase.
 		
-		def ellipsis(max_length = nil, html_encoded = false)
-			max_length = (self.length / 2) - 1 if max_length.blank?
-			# TODO: to be continued...
+		def ellipsis(max_length = nil, after_a_word = true, html_encoded = false)
+			if self.length > 1
+				max_length = (self.length / 2).round - 1 if max_length.blank?
+				# html: &hellip;
+				# todo: remove whitespaces "foobar ..."
+				# todo: enable to append it only after words
+				(self[0..max_length] + '...').gsub /\s+/, ''
+			end
 	  end
   end	
 end

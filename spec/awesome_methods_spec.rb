@@ -32,11 +32,11 @@ describe 'String#strip_tags' do
   	'<h1><a href="http://somecoolurl.com">Aloha!</a></h1>'.strip_tags.should eq 'Aloha!'
   end
 
-  it 'should remove by default the whitespaces that are allocated in place of HTML tags' do
+  it 'should remove by default the whitespaces that were allocated in place of HTML tags' do
   	'<h1>no whitespaces</h1>'.strip_tags.should eq 'no whitespaces'
   end
 
-  it 'should let the whitespaces that are allocated in place of HTML tags when required' do
+  it 'should not remove the whitespaces that were allocated in place of HTML tags, when required' do
   	'<h1>whitespaces</h1>'.strip_tags(true).should eq ' whitespaces '
   end
 end
@@ -45,18 +45,26 @@ end
 # String#slug
 # 
 describe 'String#slug' do
-  it "should parse the text to a valid format for URL's (downcase)" do
+  it 'should parse the text to an URL valid format, downcase by default' do
   	'Lorem IPSUM Dolor?'.slug.should eq 'lorem-ipsum-dolor'
   end
 
-  pending 'not downcase'
+  it 'should parse the text to an URL valid format without forcing it to downcase' do
+  	'Lorem Ipsum Dolor 2013!'.slug(false).should eq 'Lorem-Ipsum-Dolor-2013'
+  end
 end
 
 # 
 # String#ellipsis
 # 
 describe 'String#ellipsis' do
-  it "should append ellipsis to the text's half length" do
-  	'lorem ipsum'.slug.should eq 'lorem'
+  it "should append ellipsis to the text's half length by default" do
+  	'lorem ipsum!'.ellipsis.should eq 'lorem...'
   end
+
+  it "should append ellipsis to the text's half length by default (odd size)" do
+  	'lorem ipsum'.ellipsis.should eq 'lorem...'
+  end
+
+  pending "shoud not append ellipsis when String's length is less then 2"
 end
