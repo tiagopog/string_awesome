@@ -42,6 +42,15 @@ describe 'String#strip_tags' do
 end
 
 # 
+# String#no_accents
+# 
+describe 'String#no_accents' do
+  it 'should remove accents from words in the text' do
+    'lórem ipsùm dólor sìt ãmet!'.no_accents.should eq 'lorem ipsum dolor sit amet!'
+  end
+end
+
+# 
 # String#slug
 # 
 describe 'String#slug' do
@@ -83,10 +92,19 @@ describe 'String#ellipsis' do
   end
 
   it 'should append ellipsis after a word' do
-    'lorem ipsum dolor'.ellipsis(14, after_word: true).should eq 'lorem ipsum...'
+    'lorem ipsum dolor'.ellipsis(14, after_a_word: true).should eq 'lorem ipsum...'
   end
 
   it 'should append the HTML encoded ellipsis after a word' do
-    'lorem ipsum dolor'.ellipsis(13, html_encoded: true, after_word: true).should eq 'lorem ipsum&hellip;'
+    'lorem ipsum dolor'.ellipsis(13, html_encoded: true, after_a_word: true).should eq 'lorem ipsum&hellip;'
+  end
+end
+
+# 
+# String#reverse_words
+# 
+describe 'String#reverse_words' do
+  it 'should reverse a string by words' do
+    'lorem ipsum dolor'.reverse_words.should eq 'dolor ipsum lorem'
   end
 end
