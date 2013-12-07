@@ -134,7 +134,7 @@ module StringAwesome
     #    - References where it will stop counting words in the string.
     
     def count_words(max_length = nil)
-      # No duplicated whitespace
+      # No duplicated whitespaces
       str    = self.gsub(/[\s\W]+/, ' ')
       # Counts words
       count  = (max_length ? str[0...max_length] : str).split(/\s/).count
@@ -144,7 +144,7 @@ module StringAwesome
       count
     end
 
-    # Returns the N first words of a string.
+    # Returns an Array with the N first words of a string.
     # 
     # Example:
     #   >> 'lorem ipsum'.first_words
@@ -154,13 +154,10 @@ module StringAwesome
     # Arguments:
     #   amount: (Integer)
     #    - Indicates how many words it expects to ge
-    #   options: (Hash)
-    #    - Other options such as:
-    #      - :as_array - If false, it will return a String instead of an Array.
     
-    def first_words(amount = nil, options = {})
-      words = amount ? self.split(/[\s\W]+/)[0...amount] : self
-      options[:as_array] == false ? words.join(' ') : words
+    def first_words(amount = nil)
+      words = self.split(/[\s\W]+/)
+      amount ? words[0...amount] : words
     end  
 
     # Returns the N last words of a string.
@@ -173,13 +170,38 @@ module StringAwesome
     # Arguments:
     #   amount: (Integer)
     #    - Indicates how many words it expects to ge
-    #   options: (Hash)
-    #    - Other options such as:
-    #      - :as_array - If false, it will return a String instead of an Array.
     
-    def last_words(amount = nil, options = {})
-      words = amount ? self.split(/[\s\W]+/).reverse[0...amount].reverse : self
-      options[:as_array] == false ? words.join(' ') : words
+    def last_words(amount = nil)
+      words = self.split(/[\s\W]+/).reverse
+      (amount ? words[0...amount] : words).reverse
+    end
+
+    # Replaces all URL's in the text with HTML link tags
+    # 
+    # Example:
+    #   >> 'lorem ipsum'.last_words
+    #   => 'lorem ipsum'
+    #   >> 'lorem ipsum dolor'.last_words 2
+    #   => 'ipsum dolor'
+    # Arguments:
+    #   amount: (Integer)
+    #    - Indicates how many words it expects to ge
+    
+    def linkify(options = {})
+      self.gsub!(/\b(((http|ftp)[s]?:\/\/)?([a-z0-9]+\.)?(?<!@)([a-z0-9\_\-]+)(\.[a-z]+)+([\?\/\:][a-z0-9_=%&@\?\.\/\-\:\#\(\)]+)?\/?)/i) do
+        match = $1
+        tail  = $3
+        url   = match
+        # url   = (!max_length.blank? and match.length > max_length) ? match.ellipsis(max_length) : match
+
+        case match
+          when /^[^http|https|ftp||ftps]/i
+            "<a href=\"http://#{match}\">#{url}</a>"
+          else
+            "<a href=\"#{match}\">#{url}</a>"
+        end
+      end
+      self
     end
   end 
 end

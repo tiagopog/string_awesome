@@ -142,16 +142,12 @@ end
 # String#first_words
 # 
 describe 'String#first_words' do
-  it 'should return the whole string' do
-    'lorem ipsum dolor'.first_words.should eq 'lorem ipsum dolor'
+  it 'should return all the words when the amount is not passed' do
+    'lorem ipsum dolor'.first_words.should eq ['lorem', 'ipsum', 'dolor']
   end
 
   it 'should return only the 2 first words (Array)' do
     'lorem. ! ipsum dolor'.first_words(2).should eq ['lorem', 'ipsum']
-  end
-
-  it 'should return only the 2 first words (String)' do
-    'lorem. ! ipsum dolor'.first_words(2, as_array: false).should eq 'lorem ipsum'
   end
 end
 
@@ -159,15 +155,40 @@ end
 # String#last_words
 # 
 describe 'String#last_words' do
-  it 'should return the whole string' do
-    'lorem ipsum dolor'.last_words.should eq 'lorem ipsum dolor'
+  it 'should return all the words when the amount is not passed' do
+    'lorem ipsum dolor'.last_words.should eq ['lorem', 'ipsum', 'dolor']
   end
 
   it 'should return only the 2 last words (Array)' do
     'lorem. ! ipsum dolor'.first_words(2).should eq ['lorem', 'ipsum']
   end
+end
 
-  it 'should return only the 2 last words (String)' do
-    'lorem ipsum. ! dolor'.last_words(2, as_array: false).should eq 'ipsum dolor'
+# 
+# String#linkify
+# 
+describe 'String#linkify' do
+  it "should replace all the URL's in the text with HTML link tags" do
+    'Awesome site: http://foobar.com'.linkify.should eq 'Awesome site: <a href="http://foobar.com">http://foobar.com</a>'
+  end
+
+  it 'can set the class HTML attribute to be applied on the link tag' do
+    'Awesome site: http://foobar.com'.linkify(class: 'link').should eq 'Awesome site: <a href="http://foobar.com" class="link">http://foobar.com</a>'
+  end
+
+  it 'can set the target HTML attribute to be applied on the link tag' do
+    'Awesome site: http://foobar.com'.linkify(target: '_blank').should eq 'Awesome site: <a href="http://foobar.com" target="_blank">http://foobar.com</a>'
+  end
+
+  it 'can set the class and target HTML attributes to be applied on the link tag' do
+    'Awesome site: http://foobar.com'.linkify(class: 'link', target: '_blank').should eq 'Awesome site: <a href="http://foobar.com" class="link" target="_blank">http://foobar.com</a>'
+  end
+
+  it 'can truncate the URL displayed whithin the link tag' do
+    'Awesome site: http://foobar.com'.linkify(truncate: { length: 10, html_encoded: true }).should eq 'Awesome site: <a href="http://foobar.com">http://foo&hellip;</a>'
+  end
+
+  it 'can set HTML attributes and truncate the URL' do
+    'Awesome site: http://foobar.com'.linkify(class: 'link', truncate: 10).should eq 'Awesome site: <a href="http://foobar.com" class="link">http://foo...</a>'
   end
 end
