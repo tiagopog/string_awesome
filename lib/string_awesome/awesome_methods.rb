@@ -73,6 +73,8 @@ module StringAwesome
     # Example:
     #   >> "It's a very loooooong text!".ellipsis 11
     #   => "It's a very..."
+    #   >> "It's a very loooooong text!".ellipsis 8, after_a_word: true
+    #   => "It's a..."
     #
     # Arguments:
     #   max_length: (Integer)
@@ -88,17 +90,16 @@ module StringAwesome
       if length > 1 and max_length <= length
         # Adjusts the max_length
         max_length  = (length / 2).round if max_length == 0
-        max_length -= 1
         
         # Truncates the text according to the max_length
-        str = self[0..max_length]
+        str = self[0...max_length]
 
         # Defines how the ellipsis will be displayed
         ellip = options[:html_encoded] == true ? '&hellip;' : '...'
 
         # If ellipsis must be applied after a word
         if options[:after_a_word] == true
-          words = str.split ' ' 
+          words = str.split(/\s/)
           words = words[0..words.length - 2] if words.length > 1
           str   = words.join(' ')
         else
@@ -119,6 +120,25 @@ module StringAwesome
     
     def reverse_words
       self.split(/\s/).reverse.join(' ')
+    end
+
+    # Counts how many words there are in the string limited by the max_length value.
+    # 
+    # Example:
+    #   >> 'lorem ipsum dolor'.count_words
+    #   => 3
+    #   >> 'lorem ipsum dolor'.count_words 7
+    #   => 1    
+    
+    def count_words(max_length = nil)
+      # No duplicated whitespace
+      str    = self.gsub(/\s+/, ' ')
+      # Counts words
+      count  = (max_length ? str[0...max_length] : str).split(/\s/).count
+      # Checks whether the last word is really a word (must be followed by a whitespace)
+      count -= 1 unless !max_length or (str[max_length - 1] =~ /\s/) || (str[max_length] =~ /\s/)
+      
+      count
     end
   end 
 end

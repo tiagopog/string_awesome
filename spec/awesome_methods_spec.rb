@@ -108,3 +108,24 @@ describe 'String#reverse_words' do
     'lorem ipsum dolor'.reverse_words.should eq 'dolor ipsum lorem'
   end
 end
+
+# 
+# String#count_words
+# 
+describe 'String#count_words' do
+  it 'should count how many words there are in the string' do
+    'lorem ipsum dolor'.count_words.should eq 3
+  end
+
+  it 'should count how many words there are in the string limited by the max_length value (whitespace test)' do
+    'lorem ipsum dolor'.count_words(6).should eq 1
+  end
+
+  it 'should count how many words there are in the string limited by the max_length value (splitted word, test 1)' do
+    'lorem ipsum dolor'.count_words(7).should eq 1
+  end
+
+  it 'should count how many words there are in the string limited by the max_length value (splitted word, test 2)' do
+    'lorem ipsum dolor'.count_words(8).should eq 1
+  end
+end
