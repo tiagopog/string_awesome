@@ -179,27 +179,41 @@ module StringAwesome
     # Replaces all URL's in the text with HTML link tags
     # 
     # Example:
-    #   >> 'lorem ipsum'.last_words
-    #   => 'lorem ipsum'
-    #   >> 'lorem ipsum dolor'.last_words 2
-    #   => 'ipsum dolor'
+    #   >> 'Awesome site: http://foobar.com'.linkify
+    #   => 'Awesome site: <a href="http://foobar.com">http://foobar.com</a>'
+    #   >> 'Awesome site: http://foobar.com'.linkify(class: 'link', truncate: 10)
+    #   => 'Awesome site: <a href="http://foobar.com" class="link">http://foo...</a>'
     # Arguments:
-    #   amount: (Integer)
-    #    - Indicates how many words it expects to ge
+    #   options: (Hash)
+    #    - Options for the link tag, such as: 
+    #      - :truncate - If set, it will truncate the URL displayed in the link tag 
+    #                    and put an ellipsis according to the given length. It can
+    #                    be also a Hash of options:
+    #        - :length - URL's new length.
+    #        - :html_encoded - Ellipsis will be displayed as HTML encoded char.
+    #      - :class - Value for "class" attribute: <a href="url" class="link">url</a>
+    #      - :target - Value for "target" attribute: <a href="url" target="_blank">url</a>
     
     def linkify(options = {})
-      self.gsub!(/\b(((http|ftp)[s]?:\/\/)?([a-z0-9]+\.)?(?<!@)([a-z0-9\_\-]+)(\.[a-z]+)+([\?\/\:][a-z0-9_=%&@\?\.\/\-\:\#\(\)]+)?\/?)/i) do
-        match = $1
-        tail  = $3
-        url   = match
-        # url   = (!max_length.blank? and match.length > max_length) ? match.ellipsis(max_length) : match
+      self.gsub!(/\b(((ht|f)tp[s]?:\/\/)?([a-z0-9]+\.)?(?<!@)([a-z0-9\_\-]+)(\.[a-z]+)+([\?\/\:][a-z0-9_=%&@\?\.\/\-\:\#\(\)]+)?\/?)/i) do
+        displayed = match = $1
 
-        case match
-          when /^[^http|https|ftp||ftps]/i
-            "<a href=\"http://#{match}\">#{url}</a>"
-          else
-            "<a href=\"#{match}\">#{url}</a>"
+        if options[:truncate]
+          t         = options[:truncate]
+          displayed = t.instance_of?(Hash) ? match.ellipsis(t[:length], html_encoded: t[:html_encoded]) : match.ellipsis(t)
         end
+
+        if !options
+          options = ''
+        else
+          options = options.reduce ' ' do |s, v| 
+            s << (v[0] == :truncate ? '' : "#{v[0]}=\"#{v[1]}\" ")
+          end.gsub(/\s+$/, '')
+        end
+
+        match = "http://#{match}" unless match =~ /(ht|f)tp[s]?/i
+        
+        "<a href=\"#{match}\"#{options}>#{displayed}</a>"
       end
       self
     end

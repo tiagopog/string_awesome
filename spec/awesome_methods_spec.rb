@@ -172,11 +172,11 @@ describe 'String#linkify' do
     'Awesome site: http://foobar.com'.linkify.should eq 'Awesome site: <a href="http://foobar.com">http://foobar.com</a>'
   end
 
-  it 'can set the class HTML attribute to be applied on the link tag' do
+  it 'can set the "class" HTML attribute to be applied on the link tag' do
     'Awesome site: http://foobar.com'.linkify(class: 'link').should eq 'Awesome site: <a href="http://foobar.com" class="link">http://foobar.com</a>'
   end
 
-  it 'can set the target HTML attribute to be applied on the link tag' do
+  it 'can set the "target" HTML attribute to be applied on the link tag' do
     'Awesome site: http://foobar.com'.linkify(target: '_blank').should eq 'Awesome site: <a href="http://foobar.com" target="_blank">http://foobar.com</a>'
   end
 
@@ -184,11 +184,23 @@ describe 'String#linkify' do
     'Awesome site: http://foobar.com'.linkify(class: 'link', target: '_blank').should eq 'Awesome site: <a href="http://foobar.com" class="link" target="_blank">http://foobar.com</a>'
   end
 
-  it 'can truncate the URL displayed whithin the link tag' do
+  it 'can truncate the URL displayed whithin the link tag (Interger param)' do
+    'Awesome site: http://foobar.com'.linkify(truncate: 10).should eq 'Awesome site: <a href="http://foobar.com">http://foo...</a>'
+  end
+
+  it 'can truncate the URL displayed whithin the link tag (Hash param)' do
     'Awesome site: http://foobar.com'.linkify(truncate: { length: 10, html_encoded: true }).should eq 'Awesome site: <a href="http://foobar.com">http://foo&hellip;</a>'
   end
 
   it 'can set HTML attributes and truncate the URL' do
     'Awesome site: http://foobar.com'.linkify(class: 'link', truncate: 10).should eq 'Awesome site: <a href="http://foobar.com" class="link">http://foo...</a>'
+  end
+
+  it "matches URL's without the presence of 'http://' but presenting 'www'" do
+    'www.foobar.com'.linkify.should eq '<a href="http://www.foobar.com">www.foobar.com</a>'
+  end
+
+  it "matches URL's without the presence of 'http://' and 'www'" do
+    'foobar.com'.linkify.should eq '<a href="http://foobar.com">foobar.com</a>'
   end
 end
