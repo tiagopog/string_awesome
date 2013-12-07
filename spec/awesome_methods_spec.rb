@@ -128,4 +128,46 @@ describe 'String#count_words' do
   it 'should count how many words there are in the string limited by the max_length value (splitted word, test 2)' do
     'lorem ipsum dolor'.count_words(8).should eq 1
   end
+
+  it 'should not condiser a non-word character (!) as a word' do
+    'lorem ipsum ! dolor'.count_words.should eq 3
+  end
+
+ it 'should not condiser a non-word character (!) as a word' do
+    'lorem ipsum ! dolor'.count_words(13).should eq 2
+  end
+end
+
+# 
+# String#first_words
+# 
+describe 'String#first_words' do
+  it 'should return the whole string' do
+    'lorem ipsum dolor'.first_words.should eq 'lorem ipsum dolor'
+  end
+
+  it 'should return only the 2 first words (Array)' do
+    'lorem. ! ipsum dolor'.first_words(2).should eq ['lorem', 'ipsum']
+  end
+
+  it 'should return only the 2 first words (String)' do
+    'lorem. ! ipsum dolor'.first_words(2, as_array: false).should eq 'lorem ipsum'
+  end
+end
+
+# 
+# String#last_words
+# 
+describe 'String#last_words' do
+  it 'should return the whole string' do
+    'lorem ipsum dolor'.last_words.should eq 'lorem ipsum dolor'
+  end
+
+  it 'should return only the 2 last words (Array)' do
+    'lorem. ! ipsum dolor'.first_words(2).should eq ['lorem', 'ipsum']
+  end
+
+  it 'should return only the 2 last words (String)' do
+    'lorem ipsum. ! dolor'.last_words(2, as_array: false).should eq 'ipsum dolor'
+  end
 end

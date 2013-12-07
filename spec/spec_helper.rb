@@ -5,7 +5,3 @@ require 'sanitize'
 require 'escape_utils'
 
 require 'string_awesome'
-
-RSpec.configure do |config|
-  
-end

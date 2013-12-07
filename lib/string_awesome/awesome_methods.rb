@@ -80,7 +80,7 @@ module StringAwesome
     #   max_length: (Integer)
     #    - Indicates the max length expected, before ellipsis, for the result.
     #   options: (Hash)
-    #    - Other options such as 
+    #    - Other options such as: 
     #      - :html_encoded - If true, the ellipsis will be displayed in HTML encoded format: &hellip;.
     #      - :after_a_word   - If true, the ellipsis will be displayed necessarily after a word.
     
@@ -128,17 +128,58 @@ module StringAwesome
     #   >> 'lorem ipsum dolor'.count_words
     #   => 3
     #   >> 'lorem ipsum dolor'.count_words 7
-    #   => 1    
+    #   => 1
+    # Arguments:
+    #   max_length: (Integer)
+    #    - References where it will stop counting words in the string.
     
     def count_words(max_length = nil)
       # No duplicated whitespace
-      str    = self.gsub(/\s+/, ' ')
+      str    = self.gsub(/[\s\W]+/, ' ')
       # Counts words
       count  = (max_length ? str[0...max_length] : str).split(/\s/).count
       # Checks whether the last word is really a word (must be followed by a whitespace)
-      count -= 1 unless !max_length or (str[max_length - 1] =~ /\s/) || (str[max_length] =~ /\s/)
+      count -= 1 unless !max_length or (str[max_length - 1] =~ /\s/) or (!(str[max_length - 1] =~ /\W/) and (str[max_length] =~ /\s/))
       
       count
+    end
+
+    # Returns the N first words of a string.
+    # 
+    # Example:
+    #   >> 'lorem ipsum'.first_words
+    #   => 'lorem ipsum'
+    #   >> 'lorem ipsum dolor'.first_words 2
+    #   => 'lorem ipsum'
+    # Arguments:
+    #   amount: (Integer)
+    #    - Indicates how many words it expects to ge
+    #   options: (Hash)
+    #    - Other options such as:
+    #      - :as_array - If false, it will return a String instead of an Array.
+    
+    def first_words(amount = nil, options = {})
+      words = amount ? self.split(/[\s\W]+/)[0...amount] : self
+      options[:as_array] == false ? words.join(' ') : words
+    end  
+
+    # Returns the N last words of a string.
+    # 
+    # Example:
+    #   >> 'lorem ipsum'.last_words
+    #   => 'lorem ipsum'
+    #   >> 'lorem ipsum dolor'.last_words 2
+    #   => 'ipsum dolor'
+    # Arguments:
+    #   amount: (Integer)
+    #    - Indicates how many words it expects to ge
+    #   options: (Hash)
+    #    - Other options such as:
+    #      - :as_array - If false, it will return a String instead of an Array.
+    
+    def last_words(amount = nil, options = {})
+      words = amount ? self.split(/[\s\W]+/).reverse[0...amount].reverse : self
+      options[:as_array] == false ? words.join(' ') : words
     end
   end 
 end
