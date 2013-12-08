@@ -24,7 +24,7 @@ Or install it yourself as:
 
 #### String#linkify
 
-Finds URLs in text and wrap in anchor tag.
+Finds URLs in the text and wrap in anchor tag.
 
 ``` ruby
 'Awesome site: http://foobar.com'.linkify
@@ -48,7 +48,7 @@ Finds URLs in text and wrap in anchor tag.
 
 #### String#tweetify
 
-Finds URLs, Twitter handles, hashtags and wrap in anchor tag.
+Finds URLs, Twitter handles, hashtags in the text and wrap in anchor tag.
 
 ``` ruby
 'What about to follow @tiagopog?'.tweetfy
