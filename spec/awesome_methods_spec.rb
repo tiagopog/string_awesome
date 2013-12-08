@@ -169,31 +169,45 @@ end
 # 
 describe 'String#linkify' do
   it "should replace all the URL's in the text with HTML link tags" do
-    'Awesome site: http://foobar.com'.linkify.should eq 'Awesome site: <a href="http://foobar.com">http://foobar.com</a>'
+    str  = 'Awesome site: http://foobar.com'
+    this = 'Awesome site: <a href="http://foobar.com">http://foobar.com</a>'
+    str.linkify.should eq this
   end
 
   it 'can set the "class" HTML attribute to be applied on the link tag' do
-    'Awesome site: http://foobar.com'.linkify(class: 'link').should eq 'Awesome site: <a href="http://foobar.com" class="link">http://foobar.com</a>'
+    str  = 'Awesome site: http://foobar.com'
+    this = 'Awesome site: <a href="http://foobar.com" class="link">http://foobar.com</a>'
+    str.linkify(class: 'link').should eq this
   end
 
   it 'can set the "target" HTML attribute to be applied on the link tag' do
-    'Awesome site: http://foobar.com'.linkify(target: '_blank').should eq 'Awesome site: <a href="http://foobar.com" target="_blank">http://foobar.com</a>'
+    str  = 'Awesome site: http://foobar.com'
+    this = 'Awesome site: <a href="http://foobar.com" target="_blank">http://foobar.com</a>'
+    str.linkify(target: '_blank').should eq this
   end
 
   it 'can set the class and target HTML attributes to be applied on the link tag' do
-    'Awesome site: http://foobar.com'.linkify(class: 'link', target: '_blank').should eq 'Awesome site: <a href="http://foobar.com" class="link" target="_blank">http://foobar.com</a>'
+    str  = 'Awesome site: http://foobar.com'
+    this = 'Awesome site: <a href="http://foobar.com" class="link" target="_blank">http://foobar.com</a>'
+    str.linkify(class: 'link', target: '_blank').should eq this
   end
 
   it 'can truncate the URL displayed whithin the link tag (Interger param)' do
-    'Awesome site: http://foobar.com'.linkify(truncate: 10).should eq 'Awesome site: <a href="http://foobar.com">http://foo...</a>'
+    str  = 'Awesome site: http://foobar.com'
+    this =  'Awesome site: <a href="http://foobar.com">http://foo...</a>'
+    str.linkify(truncate: 10).should eq this
   end
 
   it 'can truncate the URL displayed whithin the link tag (Hash param)' do
-    'Awesome site: http://foobar.com'.linkify(truncate: { length: 10, html_encoded: true }).should eq 'Awesome site: <a href="http://foobar.com">http://foo&hellip;</a>'
+    str  = 'Awesome site: http://foobar.com'
+    this = 'Awesome site: <a href="http://foobar.com">http://foo&hellip;</a>'
+    str.linkify(truncate: { length: 10, html_encoded: true }).should eq this
   end
 
   it 'can set HTML attributes and truncate the URL' do
-    'Awesome site: http://foobar.com'.linkify(class: 'link', truncate: 10).should eq 'Awesome site: <a href="http://foobar.com" class="link">http://foo...</a>'
+    str  = 'Awesome site: http://foobar.com'
+    this = 'Awesome site: <a href="http://foobar.com" class="link">http://foo...</a>'
+    str.linkify(class: 'link', truncate: 10).should eq this
   end
 
   it "matches URL's without the presence of 'http://' but presenting 'www'" do
@@ -202,5 +216,58 @@ describe 'String#linkify' do
 
   it "matches URL's without the presence of 'http://' and 'www'" do
     'foobar.com'.linkify.should eq '<a href="http://foobar.com">foobar.com</a>'
+  end
+end
+
+# 
+# String#tweetify
+# 
+describe 'String#tweetify' do
+  it "should match URL's and replace them into HTML link tags" do
+    str  = 'Tweet some cool link: http://foobar.com'
+    this = 'Tweet some cool link: <a href="http://foobar.com" class="link">http://foobar.com</a>'
+    str.tweetify.should eq this
+  end
+
+  it 'should match Twitter handles (@username) and replace them into HTML link tags' do
+    str  = 'What about to follow @tiagopog?'
+    this = 'What about to follow <a href="https://twitter.com/tiagopog" class="twitter-handle">@tiagopog</a>?' 
+    str.tweetify.should eq this
+  end
+
+  it 'should not match foo@bar as being a Twitter handle' do
+    str = 'foo@bar'
+    str.tweetify.should eq str
+  end
+
+  it 'should match hashtags (#hashtag) and replace them into HTML link tags' do
+    str  = "Let's code! #rubyrocks"
+    this = "Let's code! <a href=\"https://twitter.com/search?q=%23rubyrocks class=\"hashtag\">#rubyrocks</a>?"
+    str.tweetify.should eq this
+  end
+
+  it 'should not match foo#bar as being a hashtag' do
+    str = 'foo#bar'
+    str.tweetify.should eq str
+  end
+
+  it 'should match links, Twitter handles, hashtags and replace them into HTML link tags' do
+    str  = 'Cool link from @tiagopog! http://foobar.com #rubyrocks'
+    this = 'Cool link from <a href="https://twitter.com/tiagopog" class="twitter-handle" target="_blank">@tiagopog</a>! 
+            <a href="http://foobar.com" class="link">http://foobar.com</a> 
+            <a href=\"https://twitter.com/search?q=%23rubyrocks\" class="hashtag" target="_blank">#rubyrocks?</a>'
+    str.tweetify.should eq this
+  end
+
+  it 'should match only Twitter handles' do
+    str  = 'Cool link from @tiagopog! http://foobar.com #rubyrocks'
+    this = 'Cool link from <a href="https://twitter.com/tiagopog" class="twitter-handle" target="_blank">@tiagopog</a>! http://foobar.com #rubyrocks?'
+    str.tweetify(only: [:twitter_handles]).should eq this
+  end
+
+  it 'should match only hashtags' do
+    str  = 'Cool link from @tiagopog! http://foobar.com #rubyrocks'
+    this = 'Cool link from @tiagopog! http://foobar.com <a href=\"https://twitter.com/search?q=%23rubyrocks\" class="hashtag" target="_blank">#rubyrocks?</a>'
+    str.tweetify(only: [:hashtags]).should eq this
   end
 end
