@@ -198,11 +198,13 @@ module StringAwesome
       self.gsub!(/\b(((ht|f)tp[s]?:\/\/)?([a-z0-9]+\.)?(?<!@)([a-z0-9\_\-]+)(\.[a-z]+)+([\?\/\:][a-z0-9_=%&@\?\.\/\-\:\#\(\)]+)?\/?)/i) do
         displayed = match = $1
 
+        # Truncates the URL
         if options[:truncate]
           t         = options[:truncate]
           displayed = t.instance_of?(Hash) ? match.ellipsis(t[:length], html_encoded: t[:html_encoded]) : match.ellipsis(t)
         end
 
+        # Applies 'class' and 'target' options
         if !options
           options = ''
         else
@@ -211,11 +213,52 @@ module StringAwesome
           end.gsub(/\s+$/, '')
         end
 
+        # Forces the presence of the 'http://'
         match = "http://#{match}" unless match =~ /(ht|f)tp[s]?/i
         
         "<a href=\"#{match}\"#{options}>#{displayed}</a>"
       end
-      self
+      self 
+    end
+
+    # Matches URL's, Twitter handles and hashtags putting them into HTML link tags.
+    # 
+    # Example:
+    #   >> 'What about to follow @tiagopog?'
+    #   => 'What about to follow <a href="https://twitter.com/tiagopog" target="_blank" class="tt-handle">@tiagopog</a>?' 
+    #   >> "Let's code! #rubyrocks"
+    #   => "Let's code! <a href=\"https://twitter.com/search?q=%23rubyrocks\" target=\"_blank\" class=\"hashtag\">#rubyrocks</a>"
+    # Arguments:
+    #   options: (Hash)
+    #    - Options such as: 
+    #      - :only - Array of Symbols restricting what will be matched on the text.
+    
+    def tweetify(options = {})      
+      # Applies linkify unless there's some restriction
+      only = options[:only]
+      str  = only ? self : self.linkify(class: 'link')
+
+      # Stores the regex in a variable just to make it more readable
+      regex = /(((^#)([a-z0-9\_]+))|(([^a-z0-9\W]|\s)((#)([a-z0-9\_]+))))|(((^@)([a-z0-9\_]+))|(([^a-z0-9\W]|\s)((@)([a-z0-9\_]+))))/i
+
+      # Iterates with the matched expressions
+      str.gsub!(regex) do |match|
+        is_hashtag = match =~ /#/
+        
+        if only and ([:hashtag, :tt_handle] != only.sort) and ((is_hashtag and !only.include?(:hashtag)) or (!is_hashtag and !only.include?(:tt_handle)))
+          match
+        else
+          match      = match.strip
+          tt_url     = 'https://twitter.com/'       
+          tag        = {
+            href:    is_hashtag ? "#{tt_url}search?q=%23#{match.gsub(/#/, '')}" : "#{tt_url}#{match.gsub(/@/, '')}",
+            class:   is_hashtag ? 'hashtag' : 'tt-handle'
+          }
+          
+          " <a href=\"#{tag[:href]}\" target=\"_blank\" class=\"#{tag[:class]}\">#{match}</a>"
+        end
+      end      
+      str
     end
   end 
 end
