@@ -17,8 +17,8 @@ module StringAwesome
       self.gsub /\n/, '<br />'
     end
 
-    # Converts the string to the title style and prevents other 
-    # letters in the middle of the word from being uppercase.
+    # Converts the string into a title style and prevents 
+    # other letters in the middle of the word from being uppercase.
     # 
     # Example:
     #   >> 'loREm IPsuM DOLOR'.to_title
@@ -28,7 +28,7 @@ module StringAwesome
       self.downcase.titleize
     end
 
-    # Removes HTML tags from text.
+    # Removes all HTML tags from text.
     # 
     # Example:
     #   >> '<h1><a href="http://somecoolurl.com">Aloha!</a></h1>'.strip_tags 
@@ -43,7 +43,7 @@ module StringAwesome
       allow_whitespace ? str : str.strip
     end
 
-    # Remove accents from words in the text.
+    # Removes accents from words in the text.
     # 
     # Example:
     #   >> 'lórem ipsùm dólor sìt ãmet!'.no_accents
@@ -53,7 +53,7 @@ module StringAwesome
       self.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/n, '').to_s
     end
 
-    # Parses text to a valid format for URL's.
+    # Parses the text to a valid format for URLs.
     # 
     # Example:
     #   >> 'Lórem IPSUM Dolor?'.slug
@@ -68,7 +68,7 @@ module StringAwesome
       downcase ? str.downcase : str
     end
 
-    # Append ellipsis to the text.
+    # Appends ellipsis to the text.
     # 
     # Example:
     #   >> "It's a very loooooong text!".ellipsis 11
@@ -112,7 +112,7 @@ module StringAwesome
       end
     end
 
-    # Reverses a string by words, instead of reversing it by every character (String#reverse).
+    # Reverses a string by words, instead of reversing it by characters.
     # 
     # Example:
     #   >> 'lorem ipsum dolor'.reverse_words
@@ -144,7 +144,7 @@ module StringAwesome
       count
     end
 
-    # Returns an Array with the N first words of a string.
+    # Returns an Array with the N first words from the text.
     # 
     # Example:
     #   >> 'lorem ipsum'.first_words
@@ -160,7 +160,7 @@ module StringAwesome
       amount ? words[0...amount] : words
     end  
 
-    # Returns the N last words of a string.
+    # Returns am Array with the N last words from the text.
     # 
     # Example:
     #   >> 'lorem ipsum'.last_words
@@ -176,7 +176,7 @@ module StringAwesome
       (amount ? words[0...amount] : words).reverse
     end
 
-    # Replaces all URL's in the text with HTML link tags
+    # Finds URLs in text and wrap in anchor tag.
     # 
     # Example:
     #   >> 'Awesome site: http://foobar.com'.linkify
@@ -186,10 +186,10 @@ module StringAwesome
     # Arguments:
     #   options: (Hash)
     #    - Options for the link tag, such as: 
-    #      - :truncate - If set, it will truncate the URL displayed in the link tag 
+    #      - :truncate - If set, it will truncate the URL displayed in the anchor tag 
     #                    and put an ellipsis according to the given length. It can
     #                    be also a Hash of options:
-    #        - :length - URL's new length.
+    #        - :length - URLs new length.
     #        - :html_encoded - Ellipsis will be displayed as HTML encoded char.
     #      - :class - Value for "class" attribute: <a href="url" class="link">url</a>
     #      - :target - Value for "target" attribute: <a href="url" target="_blank">url</a>
@@ -221,12 +221,12 @@ module StringAwesome
       self 
     end
 
-    # Matches URL's, Twitter handles and hashtags putting them into HTML link tags.
+    # Finds URLs, Twitter handles, hashtags in the text and wrap in anchor tag.
     # 
     # Example:
-    #   >> 'What about to follow @tiagopog?'
+    #   >> 'What about to follow @tiagopog?'.tweetfy
     #   => 'What about to follow <a href="https://twitter.com/tiagopog" target="_blank" class="tt-handle">@tiagopog</a>?' 
-    #   >> "Let's code! #rubyrocks"
+    #   >> "Let's code! #rubyrocks".tweetfy
     #   => "Let's code! <a href=\"https://twitter.com/search?q=%23rubyrocks\" target=\"_blank\" class=\"hashtag\">#rubyrocks</a>"
     # Arguments:
     #   options: (Hash)
