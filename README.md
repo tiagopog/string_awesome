@@ -51,10 +51,10 @@ Finds URLs in the text and wrap in anchor tag.
 Finds URLs, Twitter handles, hashtags in the text and wrap in anchor tag.
 
 ``` ruby
-'What about to follow @tiagopog?'.tweetfy
+'What about to follow @tiagopog?'.tweetify
 #=> 'What about to follow <a href="https://twitter.com/tiagopog" target="_blank" class="tt-handle">@tiagopog</a>?'
 
-"Let's code! #rubyrocks".tweetfy
+"Let's code! #rubyrocks".tweetify
 #=> "Let's code! <a href=\"https://twitter.com/search?q=%23rubyrocks\" target=\"_blank\" class=\"hashtag\">#rubyrocks</a>"
 
 'Cool link from @tiagopog! http://foobar.com #rubyrocks'.tweetify(only: [:hashtag])
