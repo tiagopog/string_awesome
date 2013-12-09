@@ -84,19 +84,11 @@ module StringAwesome
     #      - :html_encoded - If true, the ellipsis will be displayed in HTML encoded format: &hellip;.
     #      - :after_a_word   - If true, the ellipsis will be displayed necessarily after a word.
     
-    def ellipsis(max_length = 0, options = {})
-      length = self.length
-      
-      return self if length <= 1 or length < max_length
-      
-      # Adjusts the max_length
-      max_length = (length / 2).round if max_length == 0
+    def ellipsis(max_length = nil, options = {})
+      return self if self.length <= 1 or self.length < max_length.to_i
       
       # Truncates the text according to the max_length
-      str = self[0...max_length]
-
-      # Defines how the ellipsis will be displayed
-      ellip = options[:html_encoded] == true ? '&hellip;' : '...'
+      str = self[0...(max_length || (self.length / 2).round)]
 
       # If ellipsis must be applied after a word
       if options[:after_a_word] == true
@@ -104,7 +96,7 @@ module StringAwesome
         str   = words[0..words.length - 2].join(' ') if words.length > 1      
       end
        
-      str.gsub(/\s+$/, '') + ellip
+      str.gsub(/\s+$/, '') + (options[:html_encoded] == true ? '&hellip;' : '...')
     end
 
     # Reverses a string by words, instead of reversing it by characters.
@@ -200,13 +192,9 @@ module StringAwesome
         end
 
         # Applies 'class' and 'target' options
-        if !options
-          options = ''
-        else
-          options = options.reduce ' ' do |s, v| 
-            s << (v[0] == :truncate ? '' : "#{v[0]}=\"#{v[1]}\" ")
-          end.gsub(/\s+$/, '')
-        end
+        options = !options ? '' : options.reduce(' ') do |s, v| 
+          s << (v[0] == :truncate ? '' : "#{v[0]}=\"#{v[1]}\" ")
+        end.gsub(/\s+$/, '')
 
         # Forces the presence of the 'http://'
         match = "http://#{match}" unless match =~ /(ht|f)tp[s]?/i
