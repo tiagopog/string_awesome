@@ -8,7 +8,7 @@ Compatible with Ruby 1.9.3+
 
 Add this line to your application's Gemfile:
 
-    gem 'string_awesome'
+    gem 'string_awesome', '~> 0.0.1'
 
 And then execute:
 
@@ -16,7 +16,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem 'string_awesome', '~> 0.0.1'
+    $ gem 'string_awesome'
 
 ## Usage
 
