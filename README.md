@@ -16,7 +16,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install string_awesome
+    $ gem 'string_awesome', '~> 0.0.1'
 
 ## Usage
 
