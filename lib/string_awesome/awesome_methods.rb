@@ -87,29 +87,24 @@ module StringAwesome
     def ellipsis(max_length = 0, options = {})
       length = self.length
       
-      if length > 1 and max_length <= length
-        # Adjusts the max_length
-        max_length  = (length / 2).round if max_length == 0
-        
-        # Truncates the text according to the max_length
-        str = self[0...max_length]
+      return self if length <= 1 or length < max_length
+      
+      # Adjusts the max_length
+      max_length = (length / 2).round if max_length == 0
+      
+      # Truncates the text according to the max_length
+      str = self[0...max_length]
 
-        # Defines how the ellipsis will be displayed
-        ellip = options[:html_encoded] == true ? '&hellip;' : '...'
+      # Defines how the ellipsis will be displayed
+      ellip = options[:html_encoded] == true ? '&hellip;' : '...'
 
-        # If ellipsis must be applied after a word
-        if options[:after_a_word] == true
-          words = str.split(/\s/)
-          words = words[0..words.length - 2] if words.length > 1
-          str   = words.join(' ')
-        else
-          str = str.gsub(/\s+$/, '')
-        end
-         
-        str + ellip
-      else
-        self
+      # If ellipsis must be applied after a word
+      if options[:after_a_word] == true
+        words = str.split(/\s/)
+        str   = words[0..words.length - 2].join(' ') if words.length > 1      
       end
+       
+      str.gsub(/\s+$/, '') + ellip
     end
 
     # Reverses a string by words, instead of reversing it by characters.
@@ -195,13 +190,13 @@ module StringAwesome
     #      - :target - Value for "target" attribute: <a href="url" target="_blank">url</a>
     
     def linkify(options = {})
-      self.gsub!(/\b(((ht|f)tp[s]?:\/\/)?([a-z0-9]+\.)?(?<!@)([a-z0-9\_\-]+)(\.[a-z]+)+([\?\/\:][a-z0-9_=%&@\?\.\/\-\:\#\(\)]+)?\/?)/i) do
-        displayed = match = $1
-
+      self.gsub!(/\b(((ht|f)tp[s]?:\/\/)?([a-z0-9]+\.)?(?<!@)([a-z0-9\_\-]+)(\.[a-z]+)+([\?\/\:][a-z0-9_=%&@\?\.\/\-\:\#\(\)]+)?\/?)/i) do |match|
         # Truncates the URL
         if options[:truncate]
           t         = options[:truncate]
           displayed = t.instance_of?(Hash) ? match.ellipsis(t[:length], html_encoded: t[:html_encoded]) : match.ellipsis(t)
+        else
+          displayed = match
         end
 
         # Applies 'class' and 'target' options
@@ -238,11 +233,8 @@ module StringAwesome
       only = options[:only]
       str  = only ? self : self.linkify(class: 'link')
 
-      # Stores the regex in a variable just to make it more readable
-      regex = /(((^#)([a-z0-9\_]+))|(([^a-z0-9\W]|\s)((#)([a-z0-9\_]+))))|(((^@)([a-z0-9\_]+))|(([^a-z0-9\W]|\s)((@)([a-z0-9\_]+))))/i
-
       # Iterates with the matched expressions
-      str.gsub!(regex) do |match|
+      str.gsub!(/(((^[@#])|([^a-z0-9\W]|\s)([@|#]))([a-z0-9\_]+))/i) do |match|
         is_hashtag = match =~ /#/
         
         if only and ([:hashtag, :tt_handle] != only.sort) and ((is_hashtag and !only.include?(:hashtag)) or (!is_hashtag and !only.include?(:tt_handle)))
