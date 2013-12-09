@@ -16,7 +16,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem 'string_awesome'
+    $ gem install string_awesome
 
 ## Usage
 
