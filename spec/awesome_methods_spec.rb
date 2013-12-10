@@ -101,6 +101,15 @@ describe 'String#ellipsis' do
 end
 
 # 
+# String#words
+# 
+describe 'String#words' do
+  it 'should return an array with all the words from the string' do
+    'Lorem! Ipsum dolor, sit amet 2013.'.words.should eq ['Lorem', 'Ipsum', 'dolor', 'sit', 'amet', '2013']
+  end
+end
+
+# 
 # String#reverse_words
 # 
 describe 'String#reverse_words' do

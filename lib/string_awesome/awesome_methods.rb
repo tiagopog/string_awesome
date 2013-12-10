@@ -68,6 +68,77 @@ module StringAwesome
       downcase ? str.downcase : str
     end
 
+    # Returns an array with all the words from the string.
+    # 
+    # Example:
+    #   >> 'Lorem! Ipsum dolor, sit amet 2013.'.words
+    #   => ['Lorem', 'Ipsum', 'dolor', 'sit', 'amet', '2013']
+    
+    def words
+      self.split(/[\s\W]+/)
+    end
+
+    # Reverses a string by words, instead of reversing it by characters.
+    # 
+    # Example:
+    #   >> 'lorem ipsum dolor'.reverse_words
+    #   => 'dolor ipsum lorem'
+    
+    def reverse_words
+      self.split(/\s/).reverse.join(' ')
+    end
+
+    # Counts how many words there are in the string limited by the max_length value.
+    # 
+    # Example:
+    #   >> 'lorem ipsum dolor'.count_words
+    #   => 3
+    #   >> 'lorem ipsum dolor'.count_words 7
+    #   => 1
+    # Arguments:
+    #   max_length: (Integer)
+    #    - References where it will stop counting words in the string.
+    
+    def count_words(max_length = nil)
+      # Counts words
+      count  = (max_length ? self[0...max_length] : self).words.count
+      # Checks if the last word is complete
+      count -= 1 if max_length and self[max_length - 1, 2] =~ /\w{2}/
+      
+      count
+    end
+
+    # Returns an Array with the N first words from the text.
+    # 
+    # Example:
+    #   >> 'lorem ipsum'.first_words
+    #   => 'lorem ipsum'
+    #   >> 'lorem ipsum dolor'.first_words 2
+    #   => 'lorem ipsum'
+    # Arguments:
+    #   amount: (Integer)
+    #    - Indicates how many words it expects to ge
+    
+    def first_words(amount = nil)
+      amount ? self.words[0...amount] : self.words
+    end  
+
+    # Returns am Array with the N last words from the text.
+    # 
+    # Example:
+    #   >> 'lorem ipsum'.last_words
+    #   => 'lorem ipsum'
+    #   >> 'lorem ipsum dolor'.last_words 2
+    #   => 'ipsum dolor'
+    # Arguments:
+    #   amount: (Integer)
+    #    - Indicates how many words it expects to ge
+    
+    def last_words(amount = nil)
+      words = self.words.reverse
+      (amount ? words[0...amount] : words).reverse
+    end
+
     # Appends ellipsis to the text.
     # 
     # Example:
@@ -100,75 +171,11 @@ module StringAwesome
 
       # If ellipsis must be applied after a word
       if options[:after_a_word] == true
-        words = str.split(/\s/)
+        words = str.words
         str   = words[0..words.length - 2].join(' ') if words.length > 1      
       end
        
       str.gsub(/\s+$/, '') + ellip
-    end
-
-    # Reverses a string by words, instead of reversing it by characters.
-    # 
-    # Example:
-    #   >> 'lorem ipsum dolor'.reverse_words
-    #   => 'dolor ipsum lorem'
-    
-    def reverse_words
-      self.split(/\s/).reverse.join(' ')
-    end
-
-    # Counts how many words there are in the string limited by the max_length value.
-    # 
-    # Example:
-    #   >> 'lorem ipsum dolor'.count_words
-    #   => 3
-    #   >> 'lorem ipsum dolor'.count_words 7
-    #   => 1
-    # Arguments:
-    #   max_length: (Integer)
-    #    - References where it will stop counting words in the string.
-    
-    def count_words(max_length = nil)
-      # No duplicated whitespaces
-      str    = self.gsub(/[\s\W]+/, ' ')
-      # Counts words
-      count  = (max_length ? str[0...max_length] : str).split(/\s/).count
-      # Checks whether the last word is really a word (must be followed by a whitespace)
-      count -= 1 unless !max_length or (str[max_length - 1] =~ /\s/) or (!(str[max_length - 1] =~ /\W/) and (str[max_length] =~ /\s/))
-      
-      count
-    end
-
-    # Returns an Array with the N first words from the text.
-    # 
-    # Example:
-    #   >> 'lorem ipsum'.first_words
-    #   => 'lorem ipsum'
-    #   >> 'lorem ipsum dolor'.first_words 2
-    #   => 'lorem ipsum'
-    # Arguments:
-    #   amount: (Integer)
-    #    - Indicates how many words it expects to ge
-    
-    def first_words(amount = nil)
-      words = self.split(/[\s\W]+/)
-      amount ? words[0...amount] : words
-    end  
-
-    # Returns am Array with the N last words from the text.
-    # 
-    # Example:
-    #   >> 'lorem ipsum'.last_words
-    #   => 'lorem ipsum'
-    #   >> 'lorem ipsum dolor'.last_words 2
-    #   => 'ipsum dolor'
-    # Arguments:
-    #   amount: (Integer)
-    #    - Indicates how many words it expects to ge
-    
-    def last_words(amount = nil)
-      words = self.split(/[\s\W]+/).reverse
-      (amount ? words[0...amount] : words).reverse
     end
 
     # Finds URLs in text and wrap in anchor tag.
