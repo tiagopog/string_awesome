@@ -32,12 +32,8 @@ describe 'String#strip_tags' do
     '<h1><a href="http://somecoolurl.com">Aloha!</a></h1>'.strip_tags.should eq 'Aloha!'
   end
 
-  it 'should remove by default the whitespaces that were allocated in place of HTML tags' do
-    '<h1>no whitespaces</h1>'.strip_tags.should eq 'no whitespaces'
-  end
-
-  it 'should not remove the whitespaces that were allocated in place of HTML tags, when required' do
-    '<h1>whitespaces</h1>'.strip_tags(true).should eq ' whitespaces '
+  it 'should remove the whitespaces that were allocated in place of HTML tags' do
+    '<h1>lorem ipsum </h1> dolor'.strip_tags.should eq 'lorem ipsum dolor'
   end
 end
 

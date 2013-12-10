@@ -33,14 +33,9 @@ module StringAwesome
     # Example:
     #   >> '<h1><a href="http://somecoolurl.com">Aloha!</a></h1>'.strip_tags 
     #   => 'Aloha!'
-    #
-    # Arguments:
-    #  allow_whitespace: (Boolean)
-    #    - Let it returns the replaced block HTML tags as whitespaces.
     
-    def strip_tags(allow_whitespace = false)
-      str = Sanitize.clean self
-      allow_whitespace ? str : str.strip
+    def strip_tags
+      Sanitize.clean(self).gsub(/\s+/, ' ').strip
     end
 
     # Removes accents from words in the text.
@@ -64,7 +59,7 @@ module StringAwesome
     #    - If true, it will force the String to be in downcase.
     
     def slug(downcase = true)
-      str = self.no_accents.gsub(/\W|_/, '-').gsub(/[-]{2,}/, '-').gsub(/^-|-$/, '').to_s
+      str = self.no_accents.words.join '-'
       downcase ? str.downcase : str
     end
 
@@ -85,7 +80,7 @@ module StringAwesome
     #   => 'dolor ipsum lorem'
     
     def reverse_words
-      self.split(/\s/).reverse.join(' ')
+      self.words.reverse.join(' ')
     end
 
     # Counts how many words there are in the string limited by the max_length value.
