@@ -7,7 +7,6 @@ module StringAwesome
   # These methods are all included into the String class.
   module AwesomeMethods
     include StringAwesome::AwesomeRegexes
-
     # Replaces \n to <br /> tags.
     # 
     # Example:
@@ -210,25 +209,23 @@ module StringAwesome
     
     def linkify(options = {})
       self.gsub!(SA_URL_REGEX) do |match|
-        # Truncates the URL
-        if options[:truncate]
-          t         = options[:truncate]
-          displayed = t.instance_of?(Hash) ? match.ellipsis(t[:length], html_encoded: t[:html_encoded]) : match.ellipsis(t)
-        else
-          displayed = match
-        end
+        displayed = url_to_be_displayed match, options[:truncate]
+        
+        options.delete :truncate
 
         # Applies 'class' and 'target' options
-        options = !options ? '' : options.reduce(' ') do |s, v| 
-          s << (v[0] == :truncate ? '' : "#{v[0]}=\"#{v[1]}\" ")
-        end.gsub(/\s+$/, '')
+        options = !options ? '' : options.reduce(' ') { |s, v| s << "#{v[0]}=\"#{v[1]}\" " }
 
         # Forces the presence of the 'http://'
         match = "http://#{match}" unless match =~ SA_PROTOCOL_REGEX
         
-        "<a href=\"#{match}\"#{options}>#{displayed}</a>"
+        "<a href=\"#{match}\"#{options.gsub(/\s+$/, '')}>#{displayed}</a>"
       end
       self 
+    end
+
+    def url_to_be_displayed(m, t)
+      t ? (t.instance_of?(Hash) ? m.ellipsis(t[:length], html_encoded: t[:html_encoded]) : m.ellipsis(t)) : m
     end
 
     # Finds URLs, Twitter handles, hashtags in the text and wrap in anchor tag.
