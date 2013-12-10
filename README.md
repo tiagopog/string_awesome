@@ -1,5 +1,6 @@
 # StringAwesome
-<a href="https://codeclimate.com/repos/52a6620313d6373dad00a971/feed"><img src="https://codeclimate.com/repos/52a6620313d6373dad00a971/badges/c56ec1b4896feaf32263/gpa.png" /></a>
+
+[![Code Climate](https://codeclimate.com/repos/52a5452b7e00a4670f00b139/badges/f9183e7116f7e040c184/gpa.png)](https://codeclimate.com/repos/52a5452b7e00a4670f00b139/feed)
 
 This gem adds some awesome and easy-to-use extensions to Ruby String class.
 
