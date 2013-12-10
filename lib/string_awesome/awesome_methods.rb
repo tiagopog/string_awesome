@@ -152,25 +152,19 @@ module StringAwesome
     
     def ellipsis(max_length = 0, options = {})
       length = self.length
-      
       return self if length <= 1 or length < max_length
       
       # Adjusts the max_length
       max_length = (length / 2).round if max_length == 0
       
-      # Truncates the text according to the max_length
+      # If ellipsis must be applied after a word
       str = self[0...max_length]
-
+      str = str.words[0..words.length - 2].join(' ') if options[:after_a_word] == true
+      
       # Defines how the ellipsis will be displayed
       ellip = options[:html_encoded] == true ? '&hellip;' : '...'
-
-      # If ellipsis must be applied after a word
-      if options[:after_a_word] == true
-        words = str.words
-        str   = words[0..words.length - 2].join(' ') if words.length > 1      
-      end
        
-      str.gsub(/\s+$/, '') + ellip
+      str.strip + ellip
     end
 
     # Finds URLs in text and wrap in anchor tag.
