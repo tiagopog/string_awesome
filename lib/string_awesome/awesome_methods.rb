@@ -209,7 +209,7 @@ module StringAwesome
     
     def linkify(options = {})
       self.gsub!(SA_URL_REGEX) do |match|
-        displayed = url_to_be_displayed match, options[:truncate]
+        displayed = _truncate_url match, options[:truncate]
         
         options.delete :truncate
 
@@ -224,7 +224,14 @@ module StringAwesome
       self 
     end
 
-    def url_to_be_displayed(m, t)
+    # Trancutes the URL that will be displayed in the <a> tag
+    # 
+    # Arguments:
+    #   m: (String)
+    #     - Matched URL.
+    #   t: (Hash|Integer)
+    #     - Where the URL will be truncated.
+    def _truncate_url(m, t)
       t ? (t.instance_of?(Hash) ? m.ellipsis(t[:length], html_encoded: t[:html_encoded]) : m.ellipsis(t)) : m
     end
 
