@@ -32,12 +32,8 @@ describe 'String#strip_tags' do
     '<h1><a href="http://somecoolurl.com">Aloha!</a></h1>'.strip_tags.should eq 'Aloha!'
   end
 
-  it 'should remove by default the whitespaces that were allocated in place of HTML tags' do
-    '<h1>no whitespaces</h1>'.strip_tags.should eq 'no whitespaces'
-  end
-
-  it 'should not remove the whitespaces that were allocated in place of HTML tags, when required' do
-    '<h1>whitespaces</h1>'.strip_tags(true).should eq ' whitespaces '
+  it 'should remove the whitespaces that were allocated in place of HTML tags' do
+    '<h1>lorem ipsum </h1> dolor'.strip_tags.should eq 'lorem ipsum dolor'
   end
 end
 
@@ -64,6 +60,19 @@ describe 'String#slug' do
 end
 
 # 
+# String#truncate
+# 
+describe 'String#truncate' do
+  it 'shoud truncate the text' do
+    "It's a very loooooong text!".truncate(11).should eq "It's a very"
+  end
+
+  it 'shoud truncate the text after a word' do
+    "It's a very loooooong text!".truncate(8, true).should eq "It's a"
+  end
+end
+
+# 
 # String#ellipsis
 # 
 describe 'String#ellipsis' do
@@ -83,7 +92,7 @@ describe 'String#ellipsis' do
     'lorem ipsum'.ellipsis.should eq 'lorem...'
   end
 
-  it "should append the HTML encoded ellipsis in the text" do
+  it 'should append the HTML encoded ellipsis in the text' do
     'lorem ipsum'.ellipsis(5, html_encoded: true).should eq 'lorem&hellip;'
   end
 
@@ -97,6 +106,15 @@ describe 'String#ellipsis' do
 
   it 'should append the HTML encoded ellipsis after a word' do
     'lorem ipsum dolor'.ellipsis(13, html_encoded: true, after_a_word: true).should eq 'lorem ipsum&hellip;'
+  end
+end
+
+# 
+# String#words
+# 
+describe 'String#words' do
+  it 'should return an array with all the words from the string' do
+    'Lorem! Ipsum dolor, sit amet 2013.'.words.should eq ['Lorem', 'Ipsum', 'dolor', 'sit', 'amet', '2013']
   end
 end
 
