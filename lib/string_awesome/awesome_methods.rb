@@ -1,11 +1,13 @@
 # coding: utf-8
-
+require 'string_awesome/awesome_regexes'
 require 'active_support/inflector'
 require 'sanitize'
 
 module StringAwesome
   # These methods are all included into the String class.
   module AwesomeMethods
+    include StringAwesome::AwesomeRegexes
+
     # Replaces \n to <br /> tags.
     # 
     # Example:
@@ -45,7 +47,7 @@ module StringAwesome
     #   => 'lorem ipsum dolor sit amet!'
     
     def no_accents
-      self.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/n, '').to_s
+      self.mb_chars.normalize(:kd).gsub(SA_ACCENT_REGEX, '').to_s
     end
 
     # Parses the text to a valid format for URLs.
@@ -56,7 +58,7 @@ module StringAwesome
     #
     # Arguments:
     #   downcase: (Boolean)
-    #    - If true, it will force the String to be in downcase.
+    #     - If true, it will force the String to be in downcase.
     
     def slug(downcase = true)
       str = self.no_accents.words.join '-'
@@ -92,7 +94,7 @@ module StringAwesome
     #   => 1
     # Arguments:
     #   max_length: (Integer)
-    #    - References where it will stop counting words in the string.
+    #     - References where it will stop counting words in the string.
     
     def count_words(max_length = nil)
       # Counts words
@@ -112,7 +114,7 @@ module StringAwesome
     #   => 'lorem ipsum'
     # Arguments:
     #   amount: (Integer)
-    #    - Indicates how many words it expects to ge
+    #     - Indicates how many words it expects to ge
     
     def first_words(amount = nil)
       amount ? self.words[0...amount] : self.words
@@ -127,7 +129,7 @@ module StringAwesome
     #   => 'ipsum dolor'
     # Arguments:
     #   amount: (Integer)
-    #    - Indicates how many words it expects to ge
+    #     - Indicates how many words it expects to ge
     
     def last_words(amount = nil)
       words = self.words.reverse
@@ -144,11 +146,11 @@ module StringAwesome
     #
     # Arguments:
     #   max_length: (Integer)
-    #    - Indicates the max length expected, before ellipsis, for the result.
+    #     - Indicates the max length expected, before ellipsis, for the result.
     #   options: (Hash)
-    #    - Other options such as: 
-    #      - :html_encoded - If true, the ellipsis will be displayed in HTML encoded format: &hellip;.
-    #      - :after_a_word   - If true, the ellipsis will be displayed necessarily after a word.
+    #     - Other options such as: 
+    #       - :html_encoded - If true, the ellipsis will be displayed in HTML encoded format: &hellip;.
+    #       - :after_a_word   - If true, the ellipsis will be displayed necessarily after a word.
     
     def ellipsis(max_length = 0, options = {})
       length = self.length
@@ -166,11 +168,22 @@ module StringAwesome
 
     # Truncates the text.
     # 
+    # Example:
+    #   >> "It's a very loooooong text!".truncate 11
+    #   => "It's a very"
+    #   >> "It's a very loooooong text!".ellipsis 8, true
+    #   => "It's a"
+    #
+    # Arguments:
+    #   max_length: (Integer)
+    #     - Indicates the max length expected, before ellipsis, for the result.
+    #   after_a_word: (Boolean)
+    #     - If true, the ellipsis will be displayed necessarily after a word.
     def truncate(length, after_a_word = false)
       str = self[0...length]      
       
       if after_a_word == true
-        words = str.words
+        words = str.split(/\s+/)
         str   = words[0..words.length - 2].join(' ')
       end
 
@@ -196,7 +209,7 @@ module StringAwesome
     #      - :target - Value for "target" attribute: <a href="url" target="_blank">url</a>
     
     def linkify(options = {})
-      self.gsub!(/\b(((ht|f)tp[s]?:\/\/)?([a-z0-9]+\.)?(?<!@)([a-z0-9\_\-]+)(\.[a-z]+)+([\?\/\:][a-z0-9_=%&@\?\.\/\-\:\#\(\)]+)?\/?)/i) do |match|
+      self.gsub!(SA_URL_REGEX) do |match|
         # Truncates the URL
         if options[:truncate]
           t         = options[:truncate]
@@ -211,7 +224,7 @@ module StringAwesome
         end.gsub(/\s+$/, '')
 
         # Forces the presence of the 'http://'
-        match = "http://#{match}" unless match =~ /(ht|f)tp[s]?/i
+        match = "http://#{match}" unless match =~ SA_PROTOCOL_REGEX
         
         "<a href=\"#{match}\"#{options}>#{displayed}</a>"
       end
@@ -227,8 +240,8 @@ module StringAwesome
     #   => "Let's code! <a href=\"https://twitter.com/search?q=%23rubyrocks\" target=\"_blank\" class=\"hashtag\">#rubyrocks</a>"
     # Arguments:
     #   options: (Hash)
-    #    - Options such as: 
-    #      - :only - Array of Symbols restricting what will be matched on the text.
+    #     - Options such as: 
+    #       - :only - Array of Symbols restricting what will be matched on the text.
     
     def tweetify(options = {})      
       # Applies linkify unless there's some restriction
@@ -236,7 +249,7 @@ module StringAwesome
       str  = only ? self : self.linkify(class: 'link')
 
       # Iterates with the matched expressions
-      str.gsub!(/(((^[@#])|([^a-z0-9\W]|\s)([@|#]))([a-z0-9\_]+))/i) do |match|
+      str.gsub!(SA_TWEET_REGEX) do |match|
         is_hashtag = match =~ /#/
         
         if only and ([:hashtag, :tt_handle] != only.sort) and ((is_hashtag and !only.include?(:hashtag)) or (!is_hashtag and !only.include?(:tt_handle)))

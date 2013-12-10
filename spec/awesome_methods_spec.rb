@@ -60,6 +60,19 @@ describe 'String#slug' do
 end
 
 # 
+# String#truncate
+# 
+describe 'String#truncate' do
+  it 'shoud truncate the text' do
+    "It's a very loooooong text!".truncate(11).should eq "It's a very"
+  end
+
+  it 'shoud truncate the text after a word' do
+    "It's a very loooooong text!".truncate(8, true).should eq "It's a"
+  end
+end
+
+# 
 # String#ellipsis
 # 
 describe 'String#ellipsis' do
@@ -79,7 +92,7 @@ describe 'String#ellipsis' do
     'lorem ipsum'.ellipsis.should eq 'lorem...'
   end
 
-  it "should append the HTML encoded ellipsis in the text" do
+  it 'should append the HTML encoded ellipsis in the text' do
     'lorem ipsum'.ellipsis(5, html_encoded: true).should eq 'lorem&hellip;'
   end
 
