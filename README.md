@@ -1,4 +1,4 @@
-# StringAwesome
+# String Awesome
 
 [![Build Status](https://travis-ci.org/tiagopog/string_awesome.png?branch=master)](https://travis-ci.org/tiagopog/string_awesome)
 [![Code Climate](https://codeclimate.com/repos/52a5452b7e00a4670f00b139/badges/f9183e7116f7e040c184/gpa.png)](https://codeclimate.com/repos/52a5452b7e00a4670f00b139/feed)
