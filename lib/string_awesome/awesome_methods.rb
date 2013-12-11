@@ -245,31 +245,38 @@ module StringAwesome
     # Arguments:
     #   options: (Hash)
     #     - Options such as: 
-    #       - :only - Array of Symbols restricting what will be matched on the text.
+    #       - :only - Array of Symbols restricting what will be matched in the text.
     
     def tweetify(options = {})      
       # Applies linkify unless there's some restriction
-      only = options[:only]
-      str  = only ? self : self.linkify(class: 'link')
+      str = options[:only] ? self : self.linkify(class: 'link')
 
       # Iterates with the matched expressions
       str.gsub!(SA_TWEET_REGEX) do |match|
         is_hashtag = match =~ /#/
         
-        if only and ([:hashtag, :tt_handle] != only.sort) and ((is_hashtag and !only.include?(:hashtag)) or (!is_hashtag and !only.include?(:tt_handle)))
-          match
-        else
-          match      = match.strip
-          tt_url     = 'https://twitter.com/'       
-          tag        = {
-            href:    is_hashtag ? "#{tt_url}search?q=%23#{match.gsub(/#/, '')}" : "#{tt_url}#{match.gsub(/@/, '')}",
-            class:   is_hashtag ? 'hashtag' : 'tt-handle'
-          }
-          
-          " <a href=\"#{tag[:href]}\" target=\"_blank\" class=\"#{tag[:class]}\">#{match}</a>"
+        unless _restricted?(is_hashtag, options[:only])
+          match = match.strip
+          attrs = is_hashtag ? ['hashtag', "search?q=%23#{match.gsub(/#/, '')}"] : ['tt-handle', "#{match.gsub(/@/, '')}"]
+          attrs = { class: attrs[0], href: attrs[1] }
+          match = " <a href=\"https://twitter.com/#{attrs[:href]}\" target=\"_blank\" class=\"#{attrs[:class]}\">#{match}</a>"
         end
+        
+        match
       end      
       str
+    end
+
+    # Checks if type (:hashtag or :tt_handle) is allowed to be wrapped in anchor tag.
+    #
+    # Arguments:
+    #   is_hashtag: (Boolean)
+    #     - Does the string contain '#'?
+    #   only: (Array)
+    #     - Types allowed: :hashtag, :tt_handle.
+    
+    def _restricted?(is_hashtag, only)
+      only and ([:hashtag, :tt_handle] != only.sort) and ((is_hashtag and !only.include?(:hashtag)) or (!is_hashtag and !only.include?(:tt_handle))) 
     end
   end 
 end
