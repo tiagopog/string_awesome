@@ -186,9 +186,42 @@ end
 # String#linkify
 # 
 describe 'String#linkify' do
-  it 'should find all the URLs in text and wrap in anchor tags' do
+  it 'should find all the HTTP URLs in text and wrap in anchor tags' do
     str  = 'Awesome site: http://foobar.com'
     this = 'Awesome site: <a href="http://foobar.com">http://foobar.com</a>'
+    str.linkify.should eq this
+  end
+
+  it 'should find all the HTTPS URLs in text and wrap in anchor tags' do
+    str  = 'Awesome site: https://foobar.com'
+    this = 'Awesome site: <a href="https://foobar.com">https://foobar.com</a>'
+    str.linkify.should eq this
+  end
+
+  it 'should find all the FTP URLs in text and wrap in anchor tags' do
+    str  = 'Awesome site: ftp://foobar.com'
+    this = 'Awesome site: <a href="ftp://foobar.com">ftp://foobar.com</a>'
+    str.linkify.should eq this
+  end
+
+  it 'should match http://sub.sub.domain' do
+    url  = 'http://www3.blog.foo.bar'
+    str  = "Awesome site: #{url}"
+    this = "Awesome site: <a href=\"#{url}\">#{url}</a>"
+    str.linkify.should eq this
+  end
+
+  it 'should match query strings' do
+    url  = 'http://www.foobar.com/blog?category_id=54322&itle=lorem-ipsum-dolor'
+    str  = "Awesome site: #{url}"
+    this = "Awesome site: <a href=\"#{url}\">#{url}</a>"
+    str.linkify.should eq this
+  end
+
+  it 'should match friendly URLs' do
+    url  = 'http://www.foobar.com/blog/tech/lorem-ipsum-dolor'
+    str  = "Awesome site: #{url}"
+    this = "Awesome site: <a href=\"#{url}\">#{url}</a>"
     str.linkify.should eq this
   end
 
@@ -232,8 +265,8 @@ describe 'String#linkify' do
     'www.foobar.com'.linkify.should eq '<a href="http://www.foobar.com">www.foobar.com</a>'
   end
 
-  it "matches URLs without the presence of 'http://' and 'www'" do
-    'foobar.com'.linkify.should eq '<a href="http://foobar.com">foobar.com</a>'
+  it "should not match URLs without the presence of 'http://' and 'www'" do
+    'foobar.com'.linkify.should eq 'foobar.com'
   end
 end
 
@@ -248,8 +281,7 @@ describe 'String#tweetify' do
   end
 
   it 'should not match foo@bar as being a Twitter handle' do
-    str = 'foo@bar'
-    str.tweetify.should eq str
+    'foo@bar'.tweetify.should eq 'foo@bar'
   end
 
   it 'should find hashtags (#hashtag) and wrap them in anchor tags' do
@@ -259,8 +291,7 @@ describe 'String#tweetify' do
   end
 
   it 'should not match foo#bar as being a hashtag' do
-    str = 'foo#bar'
-    str.tweetify.should eq str
+    'foo#bar'.tweetify.should eq 'foo#bar'
   end
 
   it 'should find URLs and wrap them in anchor tags' do

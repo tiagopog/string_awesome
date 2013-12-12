@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/tiagopog/string_awesome.png?branch=master)](https://travis-ci.org/tiagopog/string_awesome)
 [![Code Climate](https://codeclimate.com/repos/52a5452b7e00a4670f00b139/badges/f9183e7116f7e040c184/gpa.png)](https://codeclimate.com/repos/52a5452b7e00a4670f00b139/feed)
 [![Dependency Status](https://gemnasium.com/tiagopog/string_awesome.png)](https://gemnasium.com/tiagopog/string_awesome)
+[![Gem Version](https://badge.fury.io/rb/string_awesome.png)](http://badge.fury.io/rb/string_awesome)
 
 This gem adds some awesome and easy-to-use extensions to Ruby String class.
 
@@ -36,9 +37,6 @@ Finds URLs in the text and wrap in anchor tag.
 
 'www.foobar.com'.linkify
 #=> '<a href="http://www.foobar.com">www.foobar.com</a>'
-
-'foobar.com'.linkify
-#=> '<a href="http://foobar.com">foobar.com</a>'
 
 'Awesome site: http://foobar.com'.linkify(class: 'link', truncate: 10)
 #=> 'Awesome site: <a href="http://foobar.com" class="link">http://foo...</a>'

@@ -209,19 +209,30 @@ module StringAwesome
     
     def linkify(options = {})
       self.gsub!(SA_URL_REGEX) do |match|
+        # http://verylongurl...
         displayed = _truncate_url match, options[:truncate]
         
-        options.delete :truncate
-
-        # Applies 'class' and 'target' options
-        options = !options ? '' : options.reduce(' ') { |s, v| s << "#{v[0]}=\"#{v[1]}\" " }
-
+        # Now that we're done with the 'truncate' option, let's remove it...
+        options.delete(:truncate) unless !options
+        
         # Forces the presence of the 'http://'
         match = "http://#{match}" unless match =~ SA_PROTOCOL_REGEX
         
-        "<a href=\"#{match}\"#{options.gsub(/\s+$/, '')}>#{displayed}</a>"
+        "<a href=\"#{match}\"#{_apply_tag_attrs(options)}>#{displayed}</a>"
       end
       self 
+    end
+    
+    # Build attributes from Hash for HTML tag
+    #
+    # Arguments:
+    #   options: (Hash)
+    #    - Options for the link tag, such as: 
+    #      - :class - Value for "class" attribute: <a href="url" class="link">url</a>
+    #      - :target - Value for "target" attribute: <a href="url" target="_blank">url</a>
+
+    def _apply_tag_attrs(options)
+      options ? options.reduce(' ') { |s, v| s << "#{v[0]}=\"#{v[1]}\" " }.gsub(/\s+$/, '') : ''
     end
 
     # Trancutes the URL that will be displayed in the <a> tag
@@ -231,8 +242,9 @@ module StringAwesome
     #     - Matched URL.
     #   t: (Hash|Integer)
     #     - Where the URL will be truncated.
+    
     def _truncate_url(m, t)
-      t ? (t.instance_of?(Hash) ? m.ellipsis(t[:length], html_encoded: t[:html_encoded]) : m.ellipsis(t)) : m
+      t ? (t.instance_of?(Hash) ? m.ellipsis(t[:length], html_encoded: t[:html_encoded]) : m.ellipsis(t)) : m 
     end
 
     # Finds URLs, Twitter handles, hashtags in the text and wrap in anchor tag.
