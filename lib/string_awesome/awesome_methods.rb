@@ -257,11 +257,14 @@ module StringAwesome
     # Arguments:
     #   options: (Hash)
     #     - Options such as: 
-    #       - :only - Array of Symbols restricting what will be matched in the text.
+    #       - :only      - Array of Symbols restricting what will be matched in the text;
+    #       - :url       - Attributes for URLs <a> links;
+    #       - :tt_handle - Attributes for Twitter handles <a> links;
+    #       - :hashtag   - Attributes for hashtag <a> links.
     
     def tweetify(options = {})      
       # Applies linkify unless there's some restriction
-      str = options[:only] ? self : self.linkify(class: 'link')
+      str = options[:only] ? self : self.linkify(options[:url] || {})
 
       # Iterates with the matched expressions
       str.gsub!(SA_TWEET_REGEX) do |match|
@@ -269,9 +272,8 @@ module StringAwesome
         
         unless _restricted?(is_hashtag, options[:only])
           match = match.strip
-          attrs = is_hashtag ? ['hashtag', "search?q=%23#{match.gsub(/#/, '')}"] : ['tt-handle', "#{match.gsub(/@/, '')}"]
-          attrs = { class: attrs[0], href: attrs[1] }
-          match = " <a href=\"https://twitter.com/#{attrs[:href]}\" target=\"_blank\" class=\"#{attrs[:class]}\">#{match}</a>"
+          attrs = is_hashtag ? ["search?q=%23#{match.gsub(/#/, '')}", :hashtag] : ["#{match.gsub(/@/, '')}", :tt_handle]
+          match = " <a href=\"https://twitter.com/#{attrs[0]}\"#{_apply_tag_attrs(options[attrs[1]])}>#{match}</a>"
         end
         
         match

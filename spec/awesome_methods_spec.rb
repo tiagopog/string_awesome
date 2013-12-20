@@ -276,8 +276,14 @@ end
 describe 'String#tweetify' do
   it 'should find Twitter handles (@username) and wrap them in anchor tags' do
     str  = 'What about to follow @tiagopog?'
-    this = 'What about to follow <a href="https://twitter.com/tiagopog" target="_blank" class="tt-handle">@tiagopog</a>?' 
+    this = 'What about to follow <a href="https://twitter.com/tiagopog">@tiagopog</a>?' 
     str.tweetify.should eq this
+  end
+
+  it 'should find Twitter handles (@username) and wrap them in anchor tags (attributes included)' do
+    str  = 'What about to follow @tiagopog?'
+    this = 'What about to follow <a href="https://twitter.com/tiagopog" target="_blank" class="tt-handle">@tiagopog</a>?' 
+    str.tweetify(tt_handle: { target: '_blank', class: 'tt-handle' }).should eq this
   end
 
   it 'should not match foo@bar as being a Twitter handle' do
@@ -286,8 +292,14 @@ describe 'String#tweetify' do
 
   it 'should find hashtags (#hashtag) and wrap them in anchor tags' do
     str  = "Let's code! #rubyrocks"
-    this = "Let's code! <a href=\"https://twitter.com/search?q=%23rubyrocks\" target=\"_blank\" class=\"hashtag\">#rubyrocks</a>"
+    this = "Let's code! <a href=\"https://twitter.com/search?q=%23rubyrocks\">#rubyrocks</a>"
     str.tweetify.should eq this
+  end
+
+  it 'should find hashtags (#hashtag) and wrap them in anchor tags (attributes included)' do
+    str  = "Let's code! #rubyrocks"
+    this = "Let's code! <a href=\"https://twitter.com/search?q=%23rubyrocks\" target=\"_blank\" class=\"hashtag\">#rubyrocks</a>"
+    str.tweetify(hashtag: { target: '_blank', class: 'hashtag' }).should eq this
   end
 
   it 'should not match foo#bar as being a hashtag' do
@@ -296,31 +308,43 @@ describe 'String#tweetify' do
 
   it 'should find URLs and wrap them in anchor tags' do
     str  = 'Tweet some cool link: http://foobar.com'
-    this = 'Tweet some cool link: <a href="http://foobar.com" class="link">http://foobar.com</a>'
+    this = 'Tweet some cool link: <a href="http://foobar.com">http://foobar.com</a>'
     str.tweetify.should eq this
+  end
+
+  it 'should find URLs and wrap them in anchor tags (attributes included)' do
+    str  = 'Tweet some cool link: http://foobar.com'
+    this = 'Tweet some cool link: <a href="http://foobar.com" class="link">http://foobar.com</a>'
+    str.tweetify(url: { class: 'link' }).should eq this
   end
 
   it 'should find links, Twitter handles, hashtags and wrap them in anchor tags' do
     str  = 'Cool link from @tiagopog! http://foobar.com #rubyrocks'
-    this = 'Cool link from <a href="https://twitter.com/tiagopog" target="_blank" class="tt-handle">@tiagopog</a>! <a href="http://foobar.com" class="link">http://foobar.com</a> <a href="https://twitter.com/search?q=%23rubyrocks" target="_blank" class="hashtag">#rubyrocks</a>'
+    this = 'Cool link from <a href="https://twitter.com/tiagopog">@tiagopog</a>! <a href="http://foobar.com">http://foobar.com</a> <a href="https://twitter.com/search?q=%23rubyrocks">#rubyrocks</a>'
     str.tweetify.should eq this
   end
 
   it 'should find only Twitter handles' do
     str  = 'Cool link from @tiagopog! http://foobar.com #rubyrocks'
-    this = 'Cool link from <a href="https://twitter.com/tiagopog" target="_blank" class="tt-handle">@tiagopog</a>! http://foobar.com #rubyrocks'
+    this = 'Cool link from <a href="https://twitter.com/tiagopog">@tiagopog</a>! http://foobar.com #rubyrocks'
     str.tweetify(only: [:tt_handle]).should eq this
   end
 
   it 'should find only hashtags' do
     str  = 'Cool link from @tiagopog! http://foobar.com #rubyrocks'
-    this = 'Cool link from @tiagopog! http://foobar.com <a href="https://twitter.com/search?q=%23rubyrocks" target="_blank" class="hashtag">#rubyrocks</a>'
+    this = 'Cool link from @tiagopog! http://foobar.com <a href="https://twitter.com/search?q=%23rubyrocks">#rubyrocks</a>'
     str.tweetify(only: [:hashtag]).should eq this
   end
 
   it 'should not find URLs, just hashtags and Twitter handles' do
     str  = 'Cool link from @tiagopog! http://foobar.com #rubyrocks'
-    this = 'Cool link from <a href="https://twitter.com/tiagopog" target="_blank" class="tt-handle">@tiagopog</a>! http://foobar.com <a href="https://twitter.com/search?q=%23rubyrocks" target="_blank" class="hashtag">#rubyrocks</a>'
+    this = 'Cool link from <a href="https://twitter.com/tiagopog">@tiagopog</a>! http://foobar.com <a href="https://twitter.com/search?q=%23rubyrocks">#rubyrocks</a>'
     str.tweetify(only: [:hashtag, :tt_handle]).should eq this
+  end
+
+  it 'should not find URLs, just hashtags and Twitter handles' do
+    str  = 'Cool link from @tiagopog! http://foobar.com #rubyrocks'
+    this = 'Cool link from <a href="https://twitter.com/tiagopog" target="_blank" class="tt-handle">@tiagopog</a>! http://foobar.com <a href="https://twitter.com/search?q=%23rubyrocks" target="_blank" class="hashtag">#rubyrocks</a>'
+    str.tweetify(only: [:hashtag, :tt_handle], tt_handle: { target: '_blank', class: 'tt-handle' }, hashtag: { target: '_blank', class: 'hashtag' }).should eq this
   end
 end
