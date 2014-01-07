@@ -46,7 +46,7 @@ module StringAwesome
     #   => 'lorem ipsum dolor sit amet!'
     
     def no_accents
-      self.mb_chars.normalize(:kd).gsub(SA_ACCENT_REGEX, '').to_s
+      self.mb_chars.normalize(:kd).gsub(SA_REGEXES[:accent], '').to_s
     end
 
     # Parses the text to a valid format for URLs.
@@ -59,9 +59,15 @@ module StringAwesome
     #   downcase: (Boolean)
     #     - If true, it will force the String to be in downcase.
     
-    def slug(downcase = true)
+    def slugfy(downcase = true)
       str = self.no_accents.words.join '-'
       downcase ? str.downcase : str
+    end
+
+    # DEPRECATED: Use 'slugfy' instead.
+    def slug(downcase = true)
+      warn '[DEPRECATION] `String#slug` is deprecated. Please use `String#slugfy` instead.'
+      slugfy downcase
     end
 
     # Returns an array with all the words from the string.
@@ -208,7 +214,7 @@ module StringAwesome
     #      - :target - Value for "target" attribute: <a href="url" target="_blank">url</a>
     
     def linkify(options = {})
-      self.gsub!(SA_URL_REGEX) do |match|
+      self.gsub!(SA_REGEXES[:url]) do |match|
         # http://verylongurl...
         displayed = _truncate_url match, options[:truncate]
         
@@ -216,7 +222,7 @@ module StringAwesome
         options.delete(:truncate) unless !options
         
         # Forces the presence of the 'http://'
-        match = "http://#{match}" unless match =~ SA_PROTOCOL_REGEX
+        match = "http://#{match}" unless match =~ SA_REGEXES[:protocol]
         
         "<a href=\"#{match}\"#{_apply_tag_attrs(options)}>#{displayed}</a>"
       end
@@ -267,7 +273,7 @@ module StringAwesome
       str = options[:only] ? self : self.linkify(options[:url] || {})
 
       # Iterates with the matched expressions
-      str.gsub!(SA_TWEET_REGEX) do |match|
+      str.gsub!(SA_REGEXES[:tweet]) do |match|
         is_hashtag = match =~ /#/
         
         unless _restricted?(is_hashtag, options[:only])

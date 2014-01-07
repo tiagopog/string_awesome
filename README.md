@@ -114,12 +114,12 @@ Removes accents from words in the text.
 #=> 'lorem ipsum dolor sit amet!'
 ```
 
-#### String#slug
+#### String#slugfy
 
 Parses the text to a valid format for URLs.
 
 ``` ruby
-'Lórem IPSUM Dolor?'.slug
+'Lórem IPSUM Dolor?'.slugfy
 #=> 'lorem-ipsum-dolor'
 ```
 
