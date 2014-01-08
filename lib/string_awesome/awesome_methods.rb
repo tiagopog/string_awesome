@@ -165,7 +165,7 @@ module StringAwesome
       max_length = (length / 2).round if max_length == 0      
       
       # Truncates the string
-      str = self.truncate(max_length, options[:after_a_word]).strip
+      str = self.sa_truncate(max_length, options[:after_a_word]).strip
       
       # Appends ellipsis
       str << (options[:html_encoded] == true ? '&hellip;' : '...')
@@ -184,7 +184,7 @@ module StringAwesome
     #     - Indicates the max length expected, before ellipsis, for the result.
     #   after_a_word: (Boolean)
     #     - If true, the ellipsis will be displayed necessarily after a word.
-    def truncate(length, after_a_word = false)
+    def sa_truncate(length, after_a_word = false)
       str = self[0...length]      
       
       if after_a_word == true
@@ -216,7 +216,7 @@ module StringAwesome
     def linkify(options = {})
       self.gsub!(SA_REGEXES[:url]) do |match|
         # http://verylongurl...
-        displayed = _truncate_url match, options[:truncate]
+        displayed = truncate_url match, options[:truncate]
         
         # Now that we're done with the 'truncate' option, let's remove it...
         options.delete(:truncate) unless !options
@@ -224,7 +224,7 @@ module StringAwesome
         # Forces the presence of the 'http://'
         match = "http://#{match}" unless match =~ SA_REGEXES[:protocol]
         
-        "<a href=\"#{match}\"#{_apply_tag_attrs(options)}>#{displayed}</a>"
+        "<a href=\"#{match}\"#{apply_tag_attrs(options)}>#{displayed}</a>"
       end
       self 
     end
@@ -237,7 +237,7 @@ module StringAwesome
     #      - :class - Value for "class" attribute: <a href="url" class="link">url</a>
     #      - :target - Value for "target" attribute: <a href="url" target="_blank">url</a>
 
-    def _apply_tag_attrs(options)
+    def apply_tag_attrs(options)
       options ? options.reduce(' ') { |s, v| s << "#{v[0]}=\"#{v[1]}\" " }.gsub(/\s+$/, '') : ''
     end
 
@@ -249,7 +249,7 @@ module StringAwesome
     #   t: (Hash|Integer)
     #     - Where the URL will be truncated.
     
-    def _truncate_url(m, t)
+    def truncate_url(m, t)
       t ? (t.instance_of?(Hash) ? m.ellipsis(t[:length], html_encoded: t[:html_encoded]) : m.ellipsis(t)) : m 
     end
 
@@ -276,10 +276,10 @@ module StringAwesome
       str.gsub!(SA_REGEXES[:tweet]) do |match|
         is_hashtag = match =~ /#/
         
-        unless _restricted?(is_hashtag, options[:only])
+        unless restricted?(is_hashtag, options[:only])
           match = match.strip
           attrs = is_hashtag ? ["search?q=%23#{match.gsub(/#/, '')}", :hashtag] : ["#{match.gsub(/@/, '')}", :tt_handle]
-          match = " <a href=\"https://twitter.com/#{attrs[0]}\"#{_apply_tag_attrs(options[attrs[1]])}>#{match}</a>"
+          match = " <a href=\"https://twitter.com/#{attrs[0]}\"#{apply_tag_attrs(options[attrs[1]])}>#{match}</a>"
         end
         
         match
@@ -295,7 +295,7 @@ module StringAwesome
     #   only: (Array)
     #     - Types allowed: :hashtag, :tt_handle.
     
-    def _restricted?(is_hashtag, only)
+    def restricted?(is_hashtag, only)
       only and ([:hashtag, :tt_handle] != only.sort) and ((is_hashtag and !only.include?(:hashtag)) or (!is_hashtag and !only.include?(:tt_handle))) 
     end
   end 

@@ -66,16 +66,16 @@ describe String do
   end
 
   # 
-  # String#truncate
+  # String#sa_truncate
   # 
   
   describe '#truncate' do
     it 'shoud truncate the text' do
-      "It's a very loooooong text!".truncate(11).should eq "It's a very"
+      "It's a very loooooong text!".sa_truncate(11).should eq "It's a very"
     end
 
     it 'shoud truncate the text after a word' do
-      "It's a very loooooong text!".truncate(8, true).should eq "It's a"
+      "It's a very loooooong text!".sa_truncate(8, true).should eq "It's a"
     end
   end
 
